@@ -38,6 +38,10 @@
         $('#btnC').click(function(e) {
             btnCClick(e);
         });
+
+        $('#btnD').click(function(e) {
+            btnDClick(e);
+        });
         init();
     });
     
@@ -153,13 +157,17 @@
         var active = false;
         var startTime = 0;
         var period = 0;
+        var rest = 1;
+        var etime = 0;
 
     
     // ボタンの初期設定
     function init(){
         $('#btnA').prop('disabled', false);
-        $('#btnB').prop('disabled', false);
+        $('#btnB').prop('disabled', true);
         $('#btnC').prop('disabled', false);
+        $('#btnD').prop('disabled', false);
+        btnCClick(null);
         
     }
 
@@ -178,17 +186,22 @@
         audio.play();
         
     }
-    
+        rate= new Date();
     // ButtonAがクリックされた時の処理
     function btnAClick(e){
         active = true;
-        startTime = new Date();
+        startTime = rate;
+        $("#btnA").prop("disabled", true); 
+        $("#btnB").prop("disabled", false);
+        rest = 0;
         
     }
 
     // ButtonBがクリックされた時の処理
     function btnBClick(e){
         active = false;
+        $("#btnA").prop("disabled", false);
+        $("#btnB").prop("disabled", true); 
         
     }
 
@@ -201,21 +214,43 @@
         $("#time").html("経過時間: 0");
         $("#remain").html("残り時間: " + period); 
     }
-    
+
+    // ButtonDがクリックされた時の処理
+    function btnDClick(e){
+        console.log("D");
+        const minute = document.getElementById("minute");
+        minute.value = "3";
+        const second = document.getElementById("second");
+        second.value = "0";
+    }
  
     // 繰り返し実行する処理
     function timer(){  
-        if (active) { 
+        if (active) {
             var time = parseInt( (new Date() - startTime)/1000);
             var rest = period - time;
             $("#time").html("経過時間: " + time); 
             $("#remain").html("残り時間: " + rest); 
             analog(rest);
-        } 
+        }
+
             if ( rest <= 0){
-                active = false;
-                alarm();
+             active = false;
+              alarm();
             }
+
+
+        
+        
+        if(rest >= 60){
+            $("body").css("backgroundColor","aqua");
+        }else if(rest  % 2 == 1 ) {
+            $("body").css("backgroundColor","yellow");
+        }else if(rest < 10){
+            $("body").css("backgroundColor","red");
+        }else{
+            $("body").css("backgroundColor","aqua");
+        }
         
     } 
 
@@ -224,15 +259,21 @@
 <body>
     <canvas id="mycanvas" width="200" height="200">Test</canvas>
 
-    <div id="minuteStr">〇</div>
-    <div id="secondStr">〇</div>
+    <div id="minuteStr">分</div>
+    <div id="secondStr">秒</div>
 
     <div id="remain">Remaining time</div>
     <div id="time">Time</div>
     <button id="btnA">Start</button>  
     <button id="btnB">Stop</button>  
-    <button id="btnC">Set</button>  
-    <input type="number" id="minute" value=0 >
-    <input type="number" id="second" value=15 >
+    <button id="btnC">Set</button> 
+    <button id="btnD">3 min</button> 
+    <input type="number" id="minute" min="0" value=0 >
+    <input type="number" id="second" min="0" max ="59"value=60 >
+    <!-- <input type="number" id="minute" value="30" max="2000" /> -->
+    <!-- <input type="button" value="btnD" onclick="btnDClick(e)" /> -->
+
+
+  }
 </body>
 </html>
